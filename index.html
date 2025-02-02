@@ -34,10 +34,14 @@
       margin: 8px 0;
       box-sizing: border-box;
     }
-    button {
-      width: 100%;
-      padding: 10px;
+    .buttons {
+      display: flex;
+      gap: 10px;
       margin-top: 10px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
       cursor: pointer;
     }
     .forgot {
@@ -58,10 +62,13 @@
 <body>
   <div class="login-container">
     <h1>DACAPO - Pour les musicien·n·e·s.</h1>
-    <form id="login-form">
+    <form id="auth-form">
       <input type="email" id="email" placeholder="Email" required>
       <input type="password" id="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
+      <div class="buttons">
+        <button type="submit" id="login-btn">Se connecter</button>
+        <button type="button" id="signup-btn">S'enregistrer</button>
+      </div>
     </form>
     <div class="forgot" id="forgot-password">Mot de passe oublié</div>
     <div id="error-message"></div>
@@ -69,9 +76,47 @@
 
   <!-- Supabase client library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <!-- On suppose que app.js initialise supabaseClient -->
   <script src="app.js"></script>
   <script>
-    // Gestion de la réinitialisation du mot de passe
+    const authForm = document.getElementById('auth-form');
+    const loginBtn = document.getElementById('login-btn');
+    const signupBtn = document.getElementById('signup-btn');
+    const errorMessage = document.getElementById('error-message');
+
+    // Connexion (login) via le submit du formulaire
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      const { user, error } = await supabaseClient.auth.signIn({ email, password });
+      if (error) {
+        errorMessage.textContent = error.message;
+      } else {
+        // Redirection vers la page principale après connexion réussie
+        window.location.href = 'main.html';
+      }
+    });
+
+    // Inscription (sign up) lors du clic sur le bouton "S'enregistrer"
+    signupBtn.addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      if (!email || !password) {
+        errorMessage.textContent = "Merci de renseigner un email et un mot de passe.";
+        return;
+      }
+      const { user, error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) {
+        errorMessage.textContent = error.message;
+      } else {
+        errorMessage.style.color = "green";
+        errorMessage.textContent = "Inscription réussie. Vérifie ton email pour confirmer ton compte.";
+      }
+    });
+
+    // Gestion du "Mot de passe oublié"
     document.getElementById('forgot-password').addEventListener('click', async () => {
       const email = document.getElementById('email').value;
       if (!email) {
