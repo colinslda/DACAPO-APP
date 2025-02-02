@@ -3,30 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Connexion - DACAPO APP</title>
+  <title>Connexion - DACAPO</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .login-container { width: 300px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-    input { width: 100%; padding: 8px; margin: 8px 0; }
-    button { width: 100%; padding: 10px; }
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .login-container {
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .forgot {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    #error-message {
+      text-align: center;
+      margin-top: 10px;
+      color: red;
+    }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h2>Connexion</h2>
+    <h1>DACAPO - Pour les musicien·n·e·s.</h1>
     <form id="login-form">
       <input type="email" id="email" placeholder="Email" required>
       <input type="password" id="password" placeholder="Mot de passe" required>
       <button type="submit">Se connecter</button>
     </form>
-    <div id="error-message" style="color: red;"></div>
+    <div class="forgot" id="forgot-password">Mot de passe oublié</div>
+    <div id="error-message"></div>
   </div>
-  
+
   <!-- Supabase client library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="app.js"></script>
   <script>
+    // Gestion de la réinitialisation du mot de passe
+    document.getElementById('forgot-password').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      if (!email) {
+        alert("Merci d'entrer ton email avant de réinitialiser le mot de passe.");
+        return;
+      }
+      const { error } = await supabaseClient.auth.api.resetPasswordForEmail(email);
+      if (error) {
+        alert("Erreur lors de la demande de réinitialisation : " + error.message);
+      } else {
+        alert("Email de réinitialisation envoyé !");
+      }
+    });
+
     // Enregistrement du service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
