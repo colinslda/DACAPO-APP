@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DACAPO - Pratique musicale</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body class="app-page">
+    <header>DACAPO</header>
+
+    <main>
+        <section id="feed" class="tab active">
+            <h2>🎶 Fil d'actualité</h2>
+            <form id="post-form">
+                <textarea id="post-content" placeholder="Partage ton actualité..."></textarea>
+                <input type="file" id="post-image">
+                <button type="submit">📢 Publier</button>
+            </form>
+            <ul id="posts-list"></ul>
+        </section>
+
+        <section id="journal" class="tab">
+            <h2>📖 Journal de bord</h2>
+            <textarea id="log" placeholder="Note tes répétitions..."></textarea>
+            <button onclick="saveJournalEntry()">💾 Sauvegarder</button>
+        </section>
+
+        <section id="metronome" class="tab">
+            <h2>🎧 Métronome</h2>
+            <input type="range" id="bpm" min="30" max="300" value="60" oninput="updateBpmDisplay()">
+            <p>BPM: <span id="bpm-value">60</span></p>
+            <button onclick="startMetronome()">▶ Démarrer</button>
+            <button onclick="stopMetronome()">⏹ Arrêter</button>
+        </section>
+    </main>
+
+    <nav>
+        <button data-tab="feed">🎶 Feed</button>
+        <button data-tab="journal">📖 Journal</button>
+        <button data-tab="metronome">🎧 Métronome</button>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('nav button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                    document.getElementById(button.dataset.tab).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
